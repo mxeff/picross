@@ -1,46 +1,32 @@
-import { css } from '@linaria/core';
-import example from '../data/example';
+import type { CSSProperties } from '@linaria/core';
+import { styled } from '@linaria/react';
 import Cell from './Cell';
+import Clues, { Direction } from './Clues';
+import example from '@/data/example';
 
-const gridCss = css`
-    display: inline-grid;
-    grid-template-columns: auto repeat(var(--column-count), 1fr);
-    grid-template-rows: auto repeat(var(--row-count), 1fr);
+const Wrapper = styled.div<{ style: CSSProperties }>`
+    display: grid;
+    grid-auto-flow: dense;
+    grid-template-columns: 1fr repeat(var(--column-count), min-content) 1fr;
+    grid-template-rows: 1fr repeat(var(--row-count), min-content) 1fr;
 
-    &::before {
+    &::before,
+    &::after {
         display: block;
         content: '';
     }
 
-    > * {
-        margin: 0.3rem;
+    &::before {
+        grid-area: 1 / 1 / 1 / 1;
     }
-`;
 
-const cluesRowCss = css`
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    font-size: 2rem;
-    font-family: 'Fira Code', monospace;
-    line-height: 1;
-    grid-column: 1;
-    min-width: 10rem;
-`;
+    &::after {
+        grid-area: 1 / -2 / -1 / -1;
+    }
 
-const cluesColumnsCss = css`
-    display: flex;
-    flex-flow: column;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    font-size: 2rem;
-    font-family: 'Fira Code', monospace;
-    line-height: 1;
-    grid-row: 1;
-    min-height: 10rem;
-    border-radius: 0.4rem;
+    > * {
+        margin: 0.2rem;
+    }
 `;
 
 const Grid: preact.FunctionalComponent = () => {
@@ -50,31 +36,15 @@ const Grid: preact.FunctionalComponent = () => {
     };
 
     return (
-        <div class={gridCss} style={style}>
-            {example.clues.rows.map((clues, i) => (
-                <div class={cluesRowCss} style={{ gridRow: i + 2 }} key={i}>
-                    {clues.map((clue, j) => (
-                        <span key={`${i}-${j}`}>{clue}</span>
-                    ))}
-                </div>
-            ))}
-            {example.clues.columns.map((clues, i) => (
-                <div
-                    class={cluesColumnsCss}
-                    style={{ gridColumn: i + 2 }}
-                    key={i}
-                >
-                    {clues.map((clue, j) => (
-                        <span key={`${i}-${j}`}>{clue}</span>
-                    ))}
-                </div>
-            ))}
+        <Wrapper style={style}>
+            <Clues clues={example.clues.rows} direction={Direction.ROW} />
+            <Clues clues={example.clues.columns} direction={Direction.COLUMN} />
             {example.cells.map((row, i) => {
                 return row.map((column, j) => {
                     return <Cell key={`${i}-${j}`} />;
                 });
             })}
-        </div>
+        </Wrapper>
     );
 };
 

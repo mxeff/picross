@@ -1,4 +1,5 @@
 import { css } from '@linaria/core';
+import colors from '@/colors';
 
 export const enum State {
     EMPTY,
@@ -9,7 +10,7 @@ export const enum State {
 const cellCss = css`
     display: block;
     cursor: pointer;
-    background-color: #eee;
+    background-color: ${colors.gallery};
     width: 4rem;
     height: 4rem;
 `;

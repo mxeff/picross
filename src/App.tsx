@@ -1,4 +1,5 @@
 import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import Footer from './components/Footer';
 import Grid from './components/Grid';
 
@@ -15,25 +16,25 @@ css`
     }
 `;
 
-const appCss = css`
+const Wrapper = styled.div`
     display: grid;
     grid-template-rows: auto min-content;
     min-height: 100vh;
 `;
 
-const mainCss = css`
+const Main = styled.main`
     align-self: center;
     justify-self: center;
 `;
 
 const App = () => {
     return (
-        <div class={appCss}>
-            <main class={mainCss}>
+        <Wrapper>
+            <Main>
                 <Grid />
-            </main>
+            </Main>
             <Footer />
-        </div>
+        </Wrapper>
     );
 };
 

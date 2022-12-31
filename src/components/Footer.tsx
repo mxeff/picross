@@ -1,7 +1,7 @@
-import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { version } from '../../package.json';
 
-const footerCss = css`
+const Wrapper = styled.footer`
     align-self: center;
     justify-self: center;
     font-size: 1.4rem;
@@ -10,7 +10,7 @@ const footerCss = css`
 `;
 
 const Footer = () => {
-    return <footer class={footerCss}>v{version}</footer>;
+    return <Wrapper>v{version}</Wrapper>;
 };
 
 export default Footer;
