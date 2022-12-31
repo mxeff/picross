@@ -5,7 +5,10 @@ import { VitePluginFonts } from 'vite-plugin-fonts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+    build: {
+        target: command === 'build' ? 'es2015' : 'module',
+    },
     plugins: [
         tsconfigPaths(),
         linaria({
@@ -18,4 +21,4 @@ export default defineConfig({
             },
         }),
     ],
-});
+}));
