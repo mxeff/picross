@@ -16,7 +16,7 @@
         "noEmit": true,
         "jsx": "react-jsx",
         "jsxImportSource": "preact",
-        "types": ["preact/compat", "preact/hooks"]
+        "types": ["@linaria/react", "preact/compat", "preact/hooks"],
     },
     "include": ["src"],
     "references": [{ "path": "./tsconfig.node.json" }]
