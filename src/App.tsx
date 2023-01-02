@@ -1,7 +1,9 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { useContext, useEffect } from 'preact/hooks';
 import Footer from './components/Footer';
 import Grid from './components/Grid';
+import { Store } from './store';
 
 css`
     :global() {
@@ -28,10 +30,21 @@ const Main = styled.main`
 `;
 
 const App = () => {
+    const { cells, clues, fetch, solve } = useContext(Store);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => fetch?.(), []);
+
+    const handleClick = (x: number, y: number) => {
+        solve?.(x, y);
+    };
+
     return (
         <Wrapper>
             <Main>
-                <Grid />
+                {cells && clues && (
+                    <Grid cells={cells} clues={clues} onClick={handleClick} />
+                )}
             </Main>
             <Footer />
         </Wrapper>
