@@ -1,4 +1,4 @@
-import { cloneDeep, isUndefined } from 'lodash';
+import { cloneDeep, isUndefined, noop } from 'lodash';
 import type { ComponentChildren } from 'preact';
 import { createContext } from 'preact';
 import { useCallback, useRef, useState } from 'preact/hooks';
@@ -10,15 +10,19 @@ import { hasIndex, isNonEmptyArray } from './types/NonEmptyArray';
 interface Context {
     cells: Picross['cells'] | null;
     clues: Picross['clues'] | null;
-    fetch?: () => void;
+    fetch: () => void;
     isLoading: boolean;
-    solve?: (x: number, y: number) => void;
+    reset: () => void;
+    solve: (x: number, y: number) => void;
 }
 
 const initialData: Context = {
     cells: null,
     clues: null,
+    fetch: noop,
     isLoading: false,
+    reset: noop,
+    solve: noop,
 };
 
 export const Store = createContext(initialData);
@@ -66,6 +70,14 @@ export const Provider = ({ children }: Props) => {
         setIsLoading(false);
     }, []);
 
+    const reset = useCallback(() => {
+        setCells(
+            Array.from({ length: example.cells.length }, () =>
+                Array<State>(example.cells[0].length).fill(State.EMPTY)
+            ) as Context['cells']
+        );
+    }, []);
+
     const solve = useCallback(
         <X extends number, Y extends number>(x: X, y: Y) => {
             const solvedCell = solution.current?.[y]?.[x];
@@ -96,6 +108,7 @@ export const Provider = ({ children }: Props) => {
         clues,
         fetch,
         isLoading,
+        reset,
         solve,
     };
 

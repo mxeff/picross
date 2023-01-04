@@ -30,20 +30,31 @@ const Main = styled.main`
 `;
 
 const App = () => {
-    const { cells, clues, fetch, solve } = useContext(Store);
+    const {
+        cells,
+        clues,
+        fetch,
+        reset: handleResetClick,
+        solve,
+    } = useContext(Store);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => fetch?.(), []);
+    useEffect(() => fetch(), []);
 
-    const handleClick = (x: number, y: number) => {
-        solve?.(x, y);
+    const handleCellClick = (x: number, y: number) => {
+        solve(x, y);
     };
 
     return (
         <Wrapper>
             <Main>
                 {cells && clues && (
-                    <Grid cells={cells} clues={clues} onClick={handleClick} />
+                    <Grid
+                        cells={cells}
+                        clues={clues}
+                        onCellClick={handleCellClick}
+                        onResetClick={handleResetClick}
+                    />
                 )}
             </Main>
             <Footer />

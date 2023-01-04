@@ -1,5 +1,6 @@
 import type { LinariaClassName } from '@linaria/core';
 import { css, cx } from '@linaria/core';
+import { forwardRef } from 'preact/compat';
 import colors from '@/colors';
 
 export const enum State {
@@ -20,6 +21,14 @@ const buttonCss = css`
     background-color: ${colors.gallery};
     width: 4rem;
     height: 4rem;
+
+    :focus {
+        border: 0.5rem solid blue;
+    }
+
+    :disabled {
+        cursor: default;
+    }
 `;
 
 const cssByState: { [K in State]?: LinariaClassName } = {
@@ -31,10 +40,19 @@ const cssByState: { [K in State]?: LinariaClassName } = {
     `,
 };
 
-const Cell = ({ onClick: handleClick, state = State.EMPTY }: Props) => {
-    const buttonWithStateCss = cx(buttonCss, cssByState[state]);
+const Cell = forwardRef<HTMLButtonElement, Props>(
+    ({ onClick: handleClick, state = State.EMPTY }, ref) => {
+        const buttonWithStateCss = cx(buttonCss, cssByState[state]);
 
-    return <button class={buttonWithStateCss} onClick={handleClick} />;
-};
+        return (
+            <button
+                class={buttonWithStateCss}
+                disabled={state !== State.EMPTY}
+                onClick={handleClick}
+                ref={ref}
+            />
+        );
+    }
+);
 
 export default Cell;

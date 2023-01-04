@@ -1,11 +1,15 @@
 import type { CSSProperties } from '@linaria/core';
 import { styled } from '@linaria/react';
+import type { RefObject } from 'preact';
+import { createRef } from 'preact';
+import { useEffect, useMemo } from 'preact/hooks';
 import Cell from './Cell';
 import Clues, { Direction } from './Clues';
 import type { Picross } from '@/interfaces/Picross';
 
 interface Props extends Picross {
-    onClick: (x: number, y: number) => void;
+    onCellClick: (x: number, y: number) => void;
+    onResetClick: () => void;
 }
 
 const Wrapper = styled.div<{ style: CSSProperties }>`
@@ -36,11 +40,30 @@ const Wrapper = styled.div<{ style: CSSProperties }>`
 const Grid = ({
     cells,
     clues: { columns, rows },
-    onClick: handleClick,
+    onCellClick: handleCellClick,
+    onResetClick: handleResetClick,
 }: Props) => {
+    const {
+        length: rowCount,
+        0: { length: columnCount },
+    } = cells;
+
+    const refs = useMemo(
+        () =>
+            Array.from<unknown, RefObject<HTMLButtonElement>[]>(
+                { length: rowCount },
+                () => Array.from({ length: columnCount }, () => createRef())
+            ),
+        [columnCount, rowCount]
+    );
+
+    useEffect(() => {
+        refs[0]?.[0]?.current?.focus();
+    }, [refs]);
+
     const style = {
-        '--column-count': cells[0].length,
-        '--row-count': cells.length,
+        '--column-count': columnCount,
+        '--row-count': rowCount,
     };
 
     return (
@@ -48,17 +71,17 @@ const Grid = ({
             <Clues clues={rows} direction={Direction.ROW} />
             <Clues clues={columns} direction={Direction.COLUMN} />
 
-            {cells.map((row, y) => {
-                return row.map((_, x) => {
-                    return (
-                        <Cell
-                            state={cells[y]?.[x]}
-                            onClick={() => handleClick(x, y)}
-                            key={`${x}-${y}`}
-                        />
-                    );
-                });
-            })}
+            {cells.map((row, y) =>
+                row.map((_, x) => (
+                    <Cell
+                        key={`${x}-${y}`}
+                        ref={refs[y]?.[x]}
+                        state={cells[y]?.[x]}
+                        onClick={() => handleCellClick(x, y)}
+                    />
+                ))
+            )}
+            <button onClick={handleResetClick}>Reset</button>
         </Wrapper>
     );
 };
