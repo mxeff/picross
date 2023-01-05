@@ -1,4 +1,4 @@
-import type { Picross } from '@/interfaces/Picross';
+import type { Picross } from '@/types/Picross';
 
 const example: Picross = {
     cells: [

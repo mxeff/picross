@@ -1,5 +1,5 @@
 import { css, cx } from '@linaria/core';
-import type { Clue } from '@/interfaces/Picross';
+import type { Clue } from '@/types/Picross';
 
 export const enum Direction {
     COLUMN,

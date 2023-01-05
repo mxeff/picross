@@ -6,12 +6,11 @@ import colors from '@/colors';
 export const enum State {
     EMPTY,
     FILLED,
-    MARKED,
-    ERROR,
+    NONE,
 }
 
 interface Props {
-    onClick: () => void;
+    onClick: (e: MouseEvent) => void;
     state?: State;
 }
 
@@ -32,8 +31,8 @@ const buttonCss = css`
 `;
 
 const cssByState: { [K in State]?: LinariaClassName } = {
-    [State.ERROR]: css`
-        background-color: red;
+    [State.EMPTY]: css`
+        opacity: 0.5;
     `,
     [State.FILLED]: css`
         background-color: green;
@@ -41,13 +40,12 @@ const cssByState: { [K in State]?: LinariaClassName } = {
 };
 
 const Cell = forwardRef<HTMLButtonElement, Props>(
-    ({ onClick: handleClick, state = State.EMPTY }, ref) => {
+    ({ onClick: handleClick, state = State.NONE }, ref) => {
         const buttonWithStateCss = cx(buttonCss, cssByState[state]);
 
         return (
             <button
                 class={buttonWithStateCss}
-                disabled={state !== State.EMPTY}
                 onClick={handleClick}
                 ref={ref}
             />

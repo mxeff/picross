@@ -5,11 +5,10 @@ import { createRef } from 'preact';
 import { useEffect, useMemo } from 'preact/hooks';
 import Cell from './Cell';
 import Clues, { Direction } from './Clues';
-import type { Picross } from '@/interfaces/Picross';
+import type { Picross } from '@/types/Picross';
 
 interface Props extends Picross {
-    onCellClick: (x: number, y: number) => void;
-    onResetClick: () => void;
+    onClick: (event: MouseEvent, x: number, y: number) => void;
 }
 
 const Wrapper = styled.div<{ style: CSSProperties }>`
@@ -40,8 +39,7 @@ const Wrapper = styled.div<{ style: CSSProperties }>`
 const Grid = ({
     cells,
     clues: { columns, rows },
-    onCellClick: handleCellClick,
-    onResetClick: handleResetClick,
+    onClick: handleClick,
 }: Props) => {
     const {
         length: rowCount,
@@ -76,12 +74,11 @@ const Grid = ({
                     <Cell
                         key={`${x}-${y}`}
                         ref={refs[y]?.[x]}
+                        onClick={(e: MouseEvent) => handleClick(e, x, y)}
                         state={cells[y]?.[x]}
-                        onClick={() => handleCellClick(x, y)}
                     />
                 ))
             )}
-            <button onClick={handleResetClick}>Reset</button>
         </Wrapper>
     );
 };
