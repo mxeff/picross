@@ -7,10 +7,12 @@ export const enum State {
     EMPTY,
     FILLED,
     NONE,
+    MARKED,
 }
 
 interface Props {
     onClick: (event: MouseEvent) => void;
+    onContextMenu: (event: MouseEvent) => void;
     onFocus: () => void;
     onKeyDown: (event: KeyboardEvent) => void;
     state?: State;
@@ -39,12 +41,16 @@ const cssByState: { [K in State]?: LinariaClassName } = {
     [State.FILLED]: css`
         background-color: green;
     `,
+    [State.MARKED]: css`
+        background-color: blue;
+    `,
 };
 
 const Cell = forwardRef<HTMLButtonElement, Props>(
     (
         {
             onClick: handleClick,
+            onContextMenu: handleContextMenu,
             onFocus: handleFocus,
             onKeyDown: handleKeyDown,
             state = State.NONE,
@@ -57,6 +63,7 @@ const Cell = forwardRef<HTMLButtonElement, Props>(
             <button
                 class={buttonWithStateCss}
                 onClick={handleClick}
+                onContextMenu={handleContextMenu}
                 onFocus={handleFocus}
                 onKeyDown={handleKeyDown}
                 ref={ref}

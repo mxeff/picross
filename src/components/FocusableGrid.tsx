@@ -43,20 +43,25 @@ const FocusableGrid = <T extends HTMLElement>({
 
             switch (code) {
                 case 'ArrowUp':
+                case 'KeyW':
                     y--;
 
                     break;
 
                 case 'ArrowRight':
+                case 'KeyD':
                     x++;
 
                     break;
+
                 case 'ArrowDown':
+                case 'KeyS':
                     y++;
 
                     break;
 
                 case 'ArrowLeft':
+                case 'KeyA':
                     x--;
             }
 

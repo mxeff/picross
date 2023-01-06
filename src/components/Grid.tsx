@@ -7,6 +7,8 @@ import type { Picross } from '@/types/Picross';
 
 interface Props extends Picross {
     onClick: (event: MouseEvent, x: number, y: number) => void;
+    onContextMenu: (event: MouseEvent, x: number, y: number) => void;
+    onKeyDown: (event: KeyboardEvent, x: number, y: number) => void;
 }
 
 const Wrapper = styled.div<{ style: CSSProperties }>`
@@ -38,6 +40,8 @@ const Grid = ({
     cells,
     clues: { columns, rows },
     onClick: handleClick,
+    onContextMenu: handleContextMenu,
+    onKeyDown: handleGridKeyDown,
 }: Props) => {
     const {
         length: rowCount,
@@ -67,8 +71,14 @@ const Grid = ({
                                 onClick={(event: MouseEvent) =>
                                     handleClick(event, x, y)
                                 }
+                                onContextMenu={(event: MouseEvent) => {
+                                    handleContextMenu(event, x, y);
+                                }}
                                 onFocus={() => handleFocus(x, y)}
-                                onKeyDown={handleKeyDown}
+                                onKeyDown={(event: KeyboardEvent) => {
+                                    handleKeyDown(event);
+                                    handleGridKeyDown(event, x, y);
+                                }}
                                 state={cells[y]?.[x]}
                             />
                         ))
