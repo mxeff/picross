@@ -38,7 +38,7 @@ const Wrapper = styled.div<{ style: CSSProperties }>`
 
 const Grid = ({
     cells,
-    clues: { columns, rows },
+    clues,
     onClick: handleClick,
     onContextMenu: handleContextMenu,
     onKeyDown: handleGridKeyDown,
@@ -55,8 +55,8 @@ const Grid = ({
 
     return (
         <Wrapper style={style}>
-            <Clues clues={rows} direction={Direction.ROW} />
-            <Clues clues={columns} direction={Direction.COLUMN} />
+            <Clues clues={clues.rows} direction={Direction.ROW} />
+            <Clues clues={clues.columns} direction={Direction.COLUMN} />
 
             <FocusableGrid<HTMLButtonElement>
                 columnCount={columnCount}
@@ -64,10 +64,9 @@ const Grid = ({
             >
                 {({ handleFocus, handleKeyDown, refs }) =>
                     cells.map((row, y) =>
-                        row.map((_, x) => (
+                        row.map((state, x) => (
                             <Cell
                                 key={`${x}-${y}`}
-                                ref={refs[y]?.[x]}
                                 onClick={(event: MouseEvent) =>
                                     handleClick(event, x, y)
                                 }
@@ -79,7 +78,8 @@ const Grid = ({
                                     handleKeyDown(event);
                                     handleGridKeyDown(event, x, y);
                                 }}
-                                state={cells[y]?.[x]}
+                                ref={refs[y]?.[x]}
+                                state={state}
                             />
                         ))
                     )
