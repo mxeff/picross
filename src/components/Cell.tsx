@@ -10,7 +10,9 @@ export const enum State {
 }
 
 interface Props {
-    onClick: (e: MouseEvent) => void;
+    onClick: (event: MouseEvent) => void;
+    onFocus: () => void;
+    onKeyDown: (event: KeyboardEvent) => void;
     state?: State;
 }
 
@@ -40,13 +42,23 @@ const cssByState: { [K in State]?: LinariaClassName } = {
 };
 
 const Cell = forwardRef<HTMLButtonElement, Props>(
-    ({ onClick: handleClick, state = State.NONE }, ref) => {
+    (
+        {
+            onClick: handleClick,
+            onFocus: handleFocus,
+            onKeyDown: handleKeyDown,
+            state = State.NONE,
+        },
+        ref
+    ) => {
         const buttonWithStateCss = cx(buttonCss, cssByState[state]);
 
         return (
             <button
                 class={buttonWithStateCss}
                 onClick={handleClick}
+                onFocus={handleFocus}
+                onKeyDown={handleKeyDown}
                 ref={ref}
             />
         );

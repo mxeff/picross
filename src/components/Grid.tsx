@@ -1,10 +1,8 @@
 import type { CSSProperties } from '@linaria/core';
 import { styled } from '@linaria/react';
-import type { RefObject } from 'preact';
-import { createRef } from 'preact';
-import { useEffect, useMemo } from 'preact/hooks';
 import Cell from './Cell';
 import Clues, { Direction } from './Clues';
+import FocusableGrid from './FocusableGrid';
 import type { Picross } from '@/types/Picross';
 
 interface Props extends Picross {
@@ -46,19 +44,6 @@ const Grid = ({
         0: { length: columnCount },
     } = cells;
 
-    const refs = useMemo(
-        () =>
-            Array.from<unknown, RefObject<HTMLButtonElement>[]>(
-                { length: rowCount },
-                () => Array.from({ length: columnCount }, () => createRef())
-            ),
-        [columnCount, rowCount]
-    );
-
-    useEffect(() => {
-        refs[0]?.[0]?.current?.focus();
-    }, [refs]);
-
     const style = {
         '--column-count': columnCount,
         '--row-count': rowCount,
@@ -69,16 +54,27 @@ const Grid = ({
             <Clues clues={rows} direction={Direction.ROW} />
             <Clues clues={columns} direction={Direction.COLUMN} />
 
-            {cells.map((row, y) =>
-                row.map((_, x) => (
-                    <Cell
-                        key={`${x}-${y}`}
-                        ref={refs[y]?.[x]}
-                        onClick={(e: MouseEvent) => handleClick(e, x, y)}
-                        state={cells[y]?.[x]}
-                    />
-                ))
-            )}
+            <FocusableGrid<HTMLButtonElement>
+                columnCount={columnCount}
+                rowCount={rowCount}
+            >
+                {({ handleFocus, handleKeyDown, refs }) =>
+                    cells.map((row, y) =>
+                        row.map((_, x) => (
+                            <Cell
+                                key={`${x}-${y}`}
+                                ref={refs[y]?.[x]}
+                                onClick={(event: MouseEvent) =>
+                                    handleClick(event, x, y)
+                                }
+                                onFocus={() => handleFocus(x, y)}
+                                onKeyDown={handleKeyDown}
+                                state={cells[y]?.[x]}
+                            />
+                        ))
+                    )
+                }
+            </FocusableGrid>
         </Wrapper>
     );
 };
