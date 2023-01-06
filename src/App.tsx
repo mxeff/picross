@@ -32,33 +32,19 @@ const Main = styled.main`
 `;
 
 const App = () => {
-    const {
-        cells,
-        clues,
-        fetch,
-        handleClick: onClick,
-        handleContextMenu,
-        handleKeyDown,
-    } = useStore();
+    const { cells, clues, fetch, handleClick: onClick } = useStore();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => fetch(), []);
 
-    const handleClick = (event: MouseEvent, x: number, y: number) => {
+    const handleClick = (event: MouseEvent, x: number, y: number) =>
         onClick(event, x, y);
-    };
 
     return (
         <Wrapper>
             <Main>
                 {cells && clues && (
-                    <Grid
-                        cells={cells}
-                        clues={clues}
-                        onClick={handleClick}
-                        onContextMenu={handleContextMenu}
-                        onKeyDown={handleKeyDown}
-                    />
+                    <Grid cells={cells} clues={clues} onClick={handleClick} />
                 )}
                 <Score />
                 <Controls />

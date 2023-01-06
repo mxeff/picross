@@ -6,9 +6,7 @@ import FocusableGrid from './FocusableGrid';
 import type { Picross } from '@/types/Picross';
 
 interface Props extends Picross {
-    onClick: (event: MouseEvent, x: number, y: number) => void;
-    onContextMenu: (event: MouseEvent, x: number, y: number) => void;
-    onKeyDown: (event: KeyboardEvent, x: number, y: number) => void;
+    onClick: (event: MouseEvent, x: number, y: number) => boolean;
 }
 
 const Wrapper = styled.div<{ style: CSSProperties }>`
@@ -36,13 +34,7 @@ const Wrapper = styled.div<{ style: CSSProperties }>`
     }
 `;
 
-const Grid = ({
-    cells,
-    clues,
-    onClick: handleClick,
-    onContextMenu: handleContextMenu,
-    onKeyDown: handleGridKeyDown,
-}: Props) => {
+const Grid = ({ cells, clues, onClick: handleClick }: Props) => {
     const {
         length: rowCount,
         0: { length: columnCount },
@@ -70,14 +62,8 @@ const Grid = ({
                                 onClick={(event: MouseEvent) =>
                                     handleClick(event, x, y)
                                 }
-                                onContextMenu={(event: MouseEvent) => {
-                                    handleContextMenu(event, x, y);
-                                }}
                                 onFocus={() => handleFocus(x, y)}
-                                onKeyDown={(event: KeyboardEvent) => {
-                                    handleKeyDown(event);
-                                    handleGridKeyDown(event, x, y);
-                                }}
+                                onKeyDown={handleKeyDown}
                                 ref={refs[y]?.[x]}
                                 state={state}
                             />

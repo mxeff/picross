@@ -20,9 +20,7 @@ interface Context {
     errorCount: number;
     fetch: () => void;
     fieldCountByState: Record<State, number>;
-    handleClick: (event: MouseEvent, x: number, y: number) => void;
-    handleContextMenu: (event: MouseEvent, x: number, y: number) => void;
-    handleKeyDown: (event: KeyboardEvent, x: number, y: number) => void;
+    handleClick: (event: MouseEvent, x: number, y: number) => boolean;
     isLoading: boolean;
     reset: () => void;
 }
@@ -37,11 +35,8 @@ const initialData: Context = {
         [State.NONE]: 0,
         [State.EMPTY]: 0,
         [State.FILLED]: 0,
-        [State.MARKED]: 0,
     },
-    handleClick: noop,
-    handleContextMenu: noop,
-    handleKeyDown: noop,
+    handleClick: () => false,
     isLoading: false,
     reset: noop,
 };
@@ -118,78 +113,31 @@ export const Provider = ({ children }: Props) => {
         setIsLoading(false);
     }, []);
 
-    const mark = useCallback(
-        <X extends number, Y extends number>(x: X, y: Y) => {
-            if (!cells || !hasIndex(cells, y)) {
-                return;
-            }
-
-            if (cells[y][x] === State.EMPTY || cells[y][x] === State.FILLED) {
-                return;
-            }
-
-            const nextCells = cloneDeep(cells);
-
-            nextCells[y][x] =
-                nextCells[y][x] === State.NONE ? State.MARKED : State.NONE;
-
-            setCells(nextCells);
-        },
-        [cells]
-    );
-
     const handleClick = useCallback(
         <X extends number, Y extends number>(event: MouseEvent, x: X, y: Y) => {
-            console.log(event);
-
             const solvedCell = solution.current?.[y]?.[x];
 
             if (!cells || solvedCell === void 0 || !hasIndex(cells, y)) {
-                return;
+                throw new Error();
             }
 
             const nextCells = cloneDeep(cells);
 
             const stateToBeSet = event.shiftKey ? State.EMPTY : State.FILLED;
 
-            if (
-                stateToBeSet === State.EMPTY &&
-                nextCells[y][x] === State.MARKED
-            ) {
-                return;
-            }
+            const isValid = solvedCell === stateToBeSet;
 
-            if (solvedCell !== stateToBeSet) {
+            if (!isValid) {
                 setErrorCount(errorCount + 1);
             }
 
             nextCells[y][x] = solvedCell;
 
             setCells(nextCells);
+
+            return isValid;
         },
         [cells, errorCount]
-    );
-
-    const handleContextMenu = useCallback(
-        <X extends number, Y extends number>(event: MouseEvent, x: X, y: Y) => {
-            event.preventDefault();
-
-            mark(x, y);
-        },
-        [mark]
-    );
-
-    const handleKeyDown = useCallback(
-        <X extends number, Y extends number>(
-            { code }: KeyboardEvent,
-            x: X,
-            y: Y
-        ) => {
-            if (code === 'Period') {
-                mark(x, y);
-            }
-        },
-        [mark]
     );
 
     const reset = useCallback(() => {
@@ -208,8 +156,6 @@ export const Provider = ({ children }: Props) => {
         fetch,
         fieldCountByState,
         handleClick,
-        handleContextMenu,
-        handleKeyDown,
         isLoading,
         reset,
     };
